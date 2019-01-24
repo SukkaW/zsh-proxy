@@ -52,7 +52,7 @@ __check_ip() {
     echo "========================================"
 }
 
-config_proxy() {
+__config_proxy() {
     echo "========================================"
     echo "Start Configuring ZSH Plugin"
     echo "----------------------------------------"
@@ -71,8 +71,16 @@ config_proxy() {
 
     echo "http://${__read_http}" >${HOME}/.zsh-proxy/http
     echo "socks5://${__read_socks5}" proxy/socks5 >${HOME}/.zsh-proxy/socks5
+}
 
-    __main
+__enable_proxy_git() {
+    git config --global http.proxy "${__ZSHPROXY_SOCKS5}"
+    git config --global https.proxy "${__ZSHPROXY_SOCKS5}"
+}
+
+__disable_proxy_git() {
+    git config --global --unset http.proxy
+    git config --global --unset https.proxy
 }
 
 myip() {
