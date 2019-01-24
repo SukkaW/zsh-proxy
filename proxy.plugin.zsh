@@ -73,6 +73,16 @@ __config_proxy() {
     echo "socks5://${__read_socks5}" proxy/socks5 >${HOME}/.zsh-proxy/socks5
 }
 
+__enable_proxy_all() {
+    export ALL_PROXY="${_ZSHPROXY_SOCKS5}"
+    export all_proxy="${_ZSHPROXY_SOCKS5}"
+}
+
+__disable_proxy_all() {
+    unset ALL_PROXY
+    unset all_proxy
+}
+
 __enable_proxy_git() {
     git config --global http.proxy "${__ZSHPROXY_SOCKS5}"
     git config --global https.proxy "${__ZSHPROXY_SOCKS5}"
