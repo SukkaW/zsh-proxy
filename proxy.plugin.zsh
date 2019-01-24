@@ -56,14 +56,21 @@ __config_proxy() {
 
 # ==================================================
 
+# Proxy for pip
+# pip can read http_proxy & https_proxy
+
 # Proxy for terminal
 
 __enable_proxy_all() {
-    export ALL_PROXY="${_ZSHPROXY_SOCKS5}"
-    export all_proxy="${_ZSHPROXY_SOCKS5}"
+    export http_proxy="${__ZSHPROXY_HTTP}"
+    export https_proxy="${__ZSHPROXY_HTTP}"
+    export ALL_PROXY="${__ZSHPROXY_SOCKS5}"
+    export all_proxy="${__ZSHPROXY_SOCKS5}"
 }
 
 __disable_proxy_all() {
+    unset http_proxy
+    unset https_proxy
     unset ALL_PROXY
     unset all_proxy
 }
@@ -80,6 +87,8 @@ __disable_proxy_git() {
     git config --global --unset https.proxy
 }
 
+# Clone with SSH can be sfind at https://github.com/comwrg/FUCK-GFW#git
+
 # ==================================================
 
 __enable_proxy() {
@@ -93,10 +102,10 @@ __disable_proxy() {
 }
 
 __auto_proxy() {
-    if [ "${_PROXY_STATUS}" = "1" ]; then
+    if [ "${__ZSHPROXY_STATUS}" = "1" ]; then
         __enable_proxy
     fi
-    if [ "${_PROXY_STATUS}" = "0" ]; then
+    if [ "${__ZSHPROXY_STATUS}" = "0" ]; then
         __disable_proxy
     fi
 }
