@@ -23,25 +23,6 @@ __check_whether_init() {
     fi
 }
 
-init_proxy() {
-    mkdir -p $HOME/.zsh-proxy
-    touch $HOME/.zsh-proxy/status
-    touch $HOME/.zsh-proxy/http
-    touch $HOME/.zsh-proxy/socks5
-    echo "----------------------------------------"
-    echo "Great! The zsh-proxy is initialized"
-    echo ""
-    echo "  ______ _____ _    _   _____  "
-    echo " |___  // ____| |  | | |  __ \ "
-    echo "    / /| (___ | |__| | | |__| ) __ _____  ___   _ "
-    echo "   / /  \___ \|  __  | |  ___/ '__/ _ \ \/ | | | |"
-    echo "  / /__ ____) | |  | | | |   | | | (_) >  <| |_| |"
-    echo " /_____|_____/|_|  |_| |_|   |_|  \___/_/\_\\\\__, |"
-    echo "                                             __/ |"
-    echo "                                            |___/ "
-    echo "----------------------------------------"
-}
-
 __check_ip() {
     echo "========================================"
     echo "Check what your IP is"
@@ -73,6 +54,10 @@ __config_proxy() {
     echo "socks5://${__read_socks5}" proxy/socks5 >${HOME}/.zsh-proxy/socks5
 }
 
+# ==================================================
+
+# Proxy for terminal
+
 __enable_proxy_all() {
     export ALL_PROXY="${_ZSHPROXY_SOCKS5}"
     export all_proxy="${_ZSHPROXY_SOCKS5}"
@@ -82,6 +67,8 @@ __disable_proxy_all() {
     unset ALL_PROXY
     unset all_proxy
 }
+
+# Proxy for Git
 
 __enable_proxy_git() {
     git config --global http.proxy "${__ZSHPROXY_SOCKS5}"
@@ -93,12 +80,63 @@ __disable_proxy_git() {
     git config --global --unset https.proxy
 }
 
+# ==================================================
+
+__enable_proxy() {
+    __enable_proxy_all
+    __enable_proxy_git
+}
+
+__disable_proxy() {
+    __disable_proxy_all
+    __disable_proxy_git
+}
+
+__auto_proxy() {
+    if [ "${_PROXY_STATUS}" = "1" ]; then
+        __enable_proxy
+    fi
+    if [ "${_PROXY_STATUS}" = "0" ]; then
+        __disable_proxy
+    fi
+}
+
+# ==================================================
+
+init_proxy() {
+    mkdir -p $HOME/.zsh-proxy
+    touch $HOME/.zsh-proxy/status
+    touch $HOME/.zsh-proxy/http
+    touch $HOME/.zsh-proxy/socks5
+    echo "----------------------------------------"
+    echo "Great! The zsh-proxy is initialized"
+    echo ""
+    echo "  ______ _____ _    _   _____  "
+    echo " |___  // ____| |  | | |  __ \ "
+    echo "    / /| (___ | |__| | | |__| ) __ _____  ___   _ "
+    echo "   / /  \___ \|  __  | |  ___/ '__/ _ \ \/ | | | |"
+    echo "  / /__ ____) | |  | | | |   | | | (_) >  <| |_| |"
+    echo " /_____|_____/|_|  |_| |_|   |_|  \___/_/\_\\\\__, |"
+    echo "                                             __/ |"
+    echo "                                            |___/ "
+    echo "----------------------------------------"
+}
+
+proxy() {
+    echo "1" >${HOME}/.zsh-proxy/status
+    __enable_proxy
+    __check_ip
+}
+
+noproxy() {
+    echo "0" >${HOME}/.zsh-proxy/status
+    __disable_proxy
+    __check_ip
+}
+
 myip() {
     __check_ip
 }
 
-__main() {
-    __check_whether_init
-}
-
-__main
+__check_whether_init
+__auto_proxy
