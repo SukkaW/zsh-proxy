@@ -10,6 +10,12 @@
 # A proxy plugin for zsh
 # Sukka (https://skk.moe)
 
+__read_proxy_config() {
+    __ZSHPROXY_STATUS=$(cat "${HOME}/.zsh-proxy/status")
+    __ZSHPROXY_SOCKS5=$(cat "${HOME}/.zsh-proxy/socks5")
+    __ZSHPROXY_HTTP=$(cat "${HOME}/.zsh-proxy/http")
+}
+
 __check_whether_init() {
     if [ ! -f "${HOME}/.zsh-proxy/status" ] || [ ! -f "${HOME}/.zsh-proxy/http" ] || [ ! -f "${HOME}/.zsh-proxy/socks5" ]; then
         echo "----------------------------------------"
@@ -17,9 +23,7 @@ __check_whether_init() {
         echo "$ init_proxy"
         echo "----------------------------------------"
     else
-        __ZSHPROXY_STATUS=$(cat "${HOME}/.zsh-proxy/status")
-        __ZSHPROXY_SOCKS5=$(cat "${HOME}/.zsh-proxy/socks5")
-        __ZSHPROXY_HTTP=$(cat "${HOME}/.zsh-proxy/http")
+        __read_proxy_config
     fi
 }
 
@@ -35,7 +39,7 @@ __check_ip() {
 
 __config_proxy() {
     echo "========================================"
-    echo "Start Configuring ZSH Plugin"
+    echo "ZSH Proxy Plugin Config"
     echo "----------------------------------------"
     echo -n "[socks5 proxy] (address:port): "
     read __read_socks5
@@ -52,6 +56,8 @@ __config_proxy() {
 
     echo "http://${__read_http}" >${HOME}/.zsh-proxy/http
     echo "socks5://${__read_socks5}" >${HOME}/.zsh-proxy/socks5
+
+    __read_proxy_config
 }
 
 # ==================================================
@@ -110,27 +116,36 @@ __disable_proxy_git() {
 __enable_proxy_npm() {
     npm config set proxy ${__ZSHPROXY_HTTP}
     npm config set https-proxy ${__ZSHPROXY_HTTP}
-    yarn config set proxy ${__ZSHPROXY_HTTP}
-    yarn config set https-proxy ${__ZSHPROXY_HTTP}
+    yarn config set proxy ${__ZSHPROXY_HTTP} >/dev/null 2>&1
+    yarn config set https-proxy ${__ZSHPROXY_HTTP} >/dev/null 2>&1
 }
 
 __disable_proxy_npm() {
     npm config delete proxy
     npm config delete https-proxy
-    yarn config delete proxy
-    yarn config delete https-proxy
+    yarn config delete proxy >/dev/null 2>&1
+    yarn config delete https-proxy >/dev/null 2>&1
 }
 
 # ==================================================
 
 __enable_proxy() {
+    echo "========================================"
+    echo -n "Resetting proxy... "
     __disable_proxy_all
     __disable_proxy_git
     __disable_proxy_npm
     __disable_proxy_apt
+    echo "Done!"
+    echo "----------------------------------------"
+    echo "Enable proxy for:"
+    echo "- shell"
     __enable_proxy_all
+    echo "- git"
     __enable_proxy_git
+    echo "- npm & yarn"
     __enable_proxy_npm
+    echo "- apt"
     __enable_proxy_apt
 }
 
@@ -143,10 +158,9 @@ __disable_proxy() {
 
 __auto_proxy() {
     if [ "${__ZSHPROXY_STATUS}" = "1" ]; then
-        __enable_proxy
+        __enable_proxy_all
     fi
     if [ "${__ZSHPROXY_STATUS}" = "0" ]; then
-        __disable_proxy
     fi
 }
 
@@ -155,23 +169,28 @@ __auto_proxy() {
 init_proxy() {
     mkdir -p $HOME/.zsh-proxy
     touch $HOME/.zsh-proxy/status
+    echo "0" >${HOME}/.zsh-proxy/status
     touch $HOME/.zsh-proxy/http
     touch $HOME/.zsh-proxy/socks5
     echo "----------------------------------------"
     echo "Great! The zsh-proxy is initialized"
     echo ""
-    echo "  ______ _____ _    _   _____  "
-    echo " |___  // ____| |  | | |  __ \ "
-    echo "    / /| (___ | |__| | | |__| ) __ _____  ___   _ "
-    echo "   / /  \___ \|  __  | |  ___/ '__/ _ \ \/ | | | |"
-    echo "  / /__ ____) | |  | | | |   | | | (_) >  <| |_| |"
-    echo " /_____|_____/|_|  |_| |_|   |_|  \___/_/\_\\\\__, |"
-    echo "                                             __/ |"
-    echo "                                            |___/ "
+    echo -E '  ______ _____ _    _   _____  '
+    echo -E ' |___  // ____| |  | | |  __ \ '
+    echo -E '    / /| (___ | |__| | | |__| ) __ _____  ___   _ '
+    echo -E "   / /  \___ \|  __  | |  ___/ '__/ _ \ \/ | | | |"
+    echo -E '  / /__ ____) | |  | | | |   | | | (_) >  <| |_| |'
+    echo -E ' /_____|_____/|_|  |_| |_|   |_|  \___/_/\_\\__, |'
+    echo -E '                                             __/ |'
+    echo -E '                                            |___/ '
     echo "----------------------------------------"
     echo "Now you should run following command:"
     echo "$ config_proxy"
     echo "----------------------------------------"
+}
+
+config_proxy() {
+    __config_proxy
 }
 
 proxy() {
