@@ -56,6 +56,18 @@ __config_proxy() {
 
 # ==================================================
 
+# Proxy for APT
+
+__enable_proxy_apt() {
+    sudo touch /etc/apt/apt.conf.d/proxy.conf
+    echo -e "Acquire::http::Proxy \"${__ZSHPROXY_HTTP}\";" | sudo tee -a /etc/apt/apt.conf.d/proxy.conf >/dev/null
+    echo -e "Acquire::https::Proxy \"${__ZSHPROXY_HTTP}\";" | sudo tee -a /etc/apt/apt.conf.d/proxy.conf >/dev/null
+}
+
+__disable_proxy_apt() {
+    sudo rm -rf /etc/apt/apt.conf.d/proxy.conf
+}
+
 # Proxy for pip
 # pip can read http_proxy & https_proxy
 
@@ -112,15 +124,21 @@ __disable_proxy_npm() {
 # ==================================================
 
 __enable_proxy() {
+    __disable_proxy_all
+    __disable_proxy_git
+    __disable_proxy_npm
+    __disable_proxy_apt
     __enable_proxy_all
     __enable_proxy_git
     __enable_proxy_npm
+    __enable_proxy_apt
 }
 
 __disable_proxy() {
     __disable_proxy_all
     __disable_proxy_git
     __disable_proxy_npm
+    __disable_proxy_apt
 }
 
 __auto_proxy() {
@@ -150,6 +168,9 @@ init_proxy() {
     echo " /_____|_____/|_|  |_| |_|   |_|  \___/_/\_\\\\__, |"
     echo "                                             __/ |"
     echo "                                            |___/ "
+    echo "----------------------------------------"
+    echo "Now you should run following command:"
+    echo "$ config_proxy"
     echo "----------------------------------------"
 }
 
