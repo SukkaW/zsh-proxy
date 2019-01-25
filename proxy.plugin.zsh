@@ -51,7 +51,7 @@ __config_proxy() {
     fi
 
     echo "http://${__read_http}" >${HOME}/.zsh-proxy/http
-    echo "socks5://${__read_socks5}" proxy/socks5 >${HOME}/.zsh-proxy/socks5
+    echo "socks5://${__read_socks5}" >${HOME}/.zsh-proxy/socks5
 }
 
 # ==================================================
@@ -63,14 +63,18 @@ __config_proxy() {
 
 __enable_proxy_all() {
     export http_proxy="${__ZSHPROXY_HTTP}"
+    export HTTP_PROXY="${__ZSHPROXY_HTTP}"
     export https_proxy="${__ZSHPROXY_HTTP}"
+    export HTTPS_proxy="${__ZSHPROXY_HTTP}"
     export ALL_PROXY="${__ZSHPROXY_SOCKS5}"
     export all_proxy="${__ZSHPROXY_SOCKS5}"
 }
 
 __disable_proxy_all() {
     unset http_proxy
+    unset HTTP_PROXY
     unset https_proxy
+    unset HTTPS_PROXY
     unset ALL_PROXY
     unset all_proxy
 }
@@ -89,16 +93,34 @@ __disable_proxy_git() {
 
 # Clone with SSH can be sfind at https://github.com/comwrg/FUCK-GFW#git
 
+# NPM
+
+__enable_proxy_npm() {
+    npm config set proxy ${__ZSHPROXY_HTTP}
+    npm config set https-proxy ${__ZSHPROXY_HTTP}
+    yarn config set proxy ${__ZSHPROXY_HTTP}
+    yarn config set https-proxy ${__ZSHPROXY_HTTP}
+}
+
+__disable_proxy_npm() {
+    npm config delete proxy
+    npm config delete https-proxy
+    yarn config delete proxy
+    yarn config delete https-proxy
+}
+
 # ==================================================
 
 __enable_proxy() {
     __enable_proxy_all
     __enable_proxy_git
+    __enable_proxy_npm
 }
 
 __disable_proxy() {
     __disable_proxy_all
     __disable_proxy_git
+    __disable_proxy_npm
 }
 
 __auto_proxy() {
