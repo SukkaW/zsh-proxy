@@ -31,8 +31,13 @@ __check_ip() {
     echo "========================================"
     echo "Check what your IP is"
     echo "----------------------------------------"
+    echo -n "IPIP.NET: "
+    curl https://myip.ipip.net
+    echo "----------------------------------------"
+    echo -n "IP.CN: "
     curl https://ip.cn
     echo "----------------------------------------"
+    echo "IP.GS: "
     curl https://ip.gs
     echo "========================================"
 }
