@@ -14,10 +14,11 @@ __read_proxy_config() {
     __ZSHPROXY_STATUS=$(cat "${HOME}/.zsh-proxy/status")
     __ZSHPROXY_SOCKS5=$(cat "${HOME}/.zsh-proxy/socks5")
     __ZSHPROXY_HTTP=$(cat "${HOME}/.zsh-proxy/http")
+    __ZSHPROXY_NO_PROXY=$(cat "${HOME}/.zsh-proxy/no_proxy")
 }
 
 __check_whether_init() {
-    if [ ! -f "${HOME}/.zsh-proxy/status" ] || [ ! -f "${HOME}/.zsh-proxy/http" ] || [ ! -f "${HOME}/.zsh-proxy/socks5" ]; then
+    if [ ! -f "${HOME}/.zsh-proxy/status" ] || [ ! -f "${HOME}/.zsh-proxy/http" ] || [ ! -f "${HOME}/.zsh-proxy/socks5" ] || [ ! -f "${HOME}/.zsh-proxy/no_proxy" ]; then
         echo "----------------------------------------"
         echo "You should run following command first:"
         echo "$ init_proxy"
@@ -46,12 +47,18 @@ __config_proxy() {
     echo "========================================"
     echo "ZSH Proxy Plugin Config"
     echo "----------------------------------------"
+
     echo -n "[socks5 proxy] {Default as 127.0.0.1:1080}
 (address:port): "
     read __read_socks5
+
     echo -n "[http proxy]   {Default as 127.0.0.1:8080}
 (address:port): "
     read __read_http
+
+    echo -n "[no proxy domain] {Default as 'localhost,127.0.0.1,localaddress,.localdomain.com'}
+(address:port): "
+    read __read_no_proxy
     echo "========================================"
 
     if [ ! -n "${__read_socks5}" ]; then
@@ -60,9 +67,13 @@ __config_proxy() {
     if [ ! -n "${__read_http}" ]; then
         __read_http="127.0.0.1:8080"
     fi
+    if [ ! -n "${__read_no_proxy}" ]; then
+        __read_no_proxy="localhost,127.0.0.1,localaddress,.localdomain.com"
+    fi
 
     echo "http://${__read_http}" >${HOME}/.zsh-proxy/http
     echo "socks5://${__read_socks5}" >${HOME}/.zsh-proxy/socks5
+    echo "${__read_no_proxy}" >${HOME}/.zsh-proxy/no_proxy
 
     __read_proxy_config
 }
@@ -102,6 +113,8 @@ __enable_proxy_all() {
     # all_proxy
     export ALL_PROXY="${__ZSHPROXY_SOCKS5}"
     export all_proxy="${__ZSHPROXY_SOCKS5}"
+
+    export no_proxy="${__ZSHPROXY_NO_PROXY}"
 }
 
 __disable_proxy_all() {
@@ -204,6 +217,7 @@ init_proxy() {
     echo "0" >${HOME}/.zsh-proxy/status
     touch $HOME/.zsh-proxy/http
     touch $HOME/.zsh-proxy/socks5
+    touch $HOME/.zsh-proxy/no_proxy
     echo "----------------------------------------"
     echo "Great! The zsh-proxy is initialized"
     echo ""
