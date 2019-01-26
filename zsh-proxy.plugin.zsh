@@ -82,10 +82,19 @@ __disable_proxy_apt() {
 # Proxy for terminal
 
 __enable_proxy_all() {
+    # http_proxy
     export http_proxy="${__ZSHPROXY_HTTP}"
     export HTTP_PROXY="${__ZSHPROXY_HTTP}"
+    # https_proxy
     export https_proxy="${__ZSHPROXY_HTTP}"
     export HTTPS_proxy="${__ZSHPROXY_HTTP}"
+    # ftp_proxy
+    export ftp_proxy="${__ZSHPROXY_HTTP}"
+    export FTP_PROXY="${__ZSHPROXY_HTTP}"
+    # rsync_proxy
+    export rsync_proxy="${__ZSHPROXY_HTTP}"
+    export RSYNC_PROXY="${__ZSHPROXY_HTTP}"
+    # all_proxy
     export ALL_PROXY="${__ZSHPROXY_SOCKS5}"
     export all_proxy="${__ZSHPROXY_SOCKS5}"
 }
@@ -95,6 +104,10 @@ __disable_proxy_all() {
     unset HTTP_PROXY
     unset https_proxy
     unset HTTPS_PROXY
+    unset ftp_proxy
+    unset FTP_PROXY
+    unset rsync_proxy
+    unset RSYNC_PROXY
     unset ALL_PROXY
     unset all_proxy
 }
