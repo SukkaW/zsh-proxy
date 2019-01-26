@@ -41,9 +41,11 @@ __config_proxy() {
     echo "========================================"
     echo "ZSH Proxy Plugin Config"
     echo "----------------------------------------"
-    echo -n "[socks5 proxy] (address:port): "
+    echo -n "[socks5 proxy] {Default as 127.0.0.1:1080}
+(address:port): "
     read __read_socks5
-    echo -n "[http proxy]   (address:port): "
+    echo -n "[http proxy]   {Default as 127.0.0.1:8080}
+(address:port): "
     read __read_http
     echo "========================================"
 
@@ -130,23 +132,35 @@ __disable_proxy_npm() {
 # ==================================================
 
 __enable_proxy() {
-    echo "========================================"
-    echo -n "Resetting proxy... "
-    __disable_proxy_all
-    __disable_proxy_git
-    __disable_proxy_npm
-    __disable_proxy_apt
-    echo "Done!"
-    echo "----------------------------------------"
-    echo "Enable proxy for:"
-    echo "- shell"
-    __enable_proxy_all
-    echo "- git"
-    __enable_proxy_git
-    echo "- npm & yarn"
-    __enable_proxy_npm
-    echo "- apt"
-    __enable_proxy_apt
+    if [ ! -n "${__ZSHPROXY_STATUS}" ] || [ ! -n "${__ZSHPROXY_SOCKS5}" ] || [ ! -n "${__ZSHPROXY_HTTP}" ]; then
+        echo "========================================"
+        echo "zsh-proxy can not read configuration."
+        echo "You may have to reinitialize and reconfigure the plugin."
+        echo "Use following commands would help:"
+        echo "$ init_proxy"
+        echo "$ config_proxy"
+        echo "$ proxy"
+        echo "========================================"
+    else
+        echo "========================================"
+        echo -n "Resetting proxy... "
+        __disable_proxy_all
+        __disable_proxy_git
+        __disable_proxy_npm
+        __disable_proxy_apt
+        echo "Done!"
+        echo "----------------------------------------"
+        echo "Enable proxy for:"
+        echo "- shell"
+        __enable_proxy_all
+        echo "- git"
+        __enable_proxy_git
+        echo "- npm & yarn"
+        __enable_proxy_npm
+        echo "- apt"
+        __enable_proxy_apt
+        echo "Done!"
+    fi
 }
 
 __disable_proxy() {
@@ -184,7 +198,7 @@ init_proxy() {
     echo -E '                                             __/ |'
     echo -E '                                            |___/ '
     echo "----------------------------------------"
-    echo "Now you should run following command:"
+    echo "Now you might want to run following command:"
     echo "$ config_proxy"
     echo "----------------------------------------"
 }
