@@ -1,3 +1,4 @@
+#!/bin/bash
 #  ______ _____ _    _   _____
 # |___  // ____| |  | | |  __ \
 #    / /| (___ | |__| | | |__| ) __ _____  ___   _
@@ -39,7 +40,7 @@ __check_ip() {
 	echo -n "IPv6: "
 	curl -s https://api-ipv6.ip.sb/ip
 
-	if which python >/dev/null; then
+	if command -v python >/dev/null; then
 		echo "----------------------------------------"
 		echo "Info: "
 		curl -s https://api.ip.sb/geoip | python -m json.tool
@@ -56,38 +57,38 @@ __config_proxy() {
 
 	echo -n "[socks5 proxy] {Default as 127.0.0.1:1080}
 (address:port): "
-	read __read_socks5
+	read -r __read_socks5
 
 	echo -n "[http proxy]   {Default as 127.0.0.1:8080}
 (address:port): "
-	read __read_http
+	read -r __read_http
 
 	echo -n "[no proxy domain] {Default as 'localhost,127.0.0.1,localaddress,.localdomain.com'}
 (comma separate domains): "
-	read __read_no_proxy
+	read -r __read_no_proxy
 
 	echo -n "[git proxy type] {Default as socks5}
 (socks5 or http): "
-	read __read_git_proxy_type
+	read -r __read_git_proxy_type
 	echo "========================================"
 
-	if [ ! -n "${__read_socks5}" ]; then
+	if [ -z "${__read_socks5}" ]; then
 		__read_socks5="127.0.0.1:1080"
 	fi
-	if [ ! -n "${__read_http}" ]; then
+	if [ -z "${__read_http}" ]; then
 		__read_http="127.0.0.1:8080"
 	fi
-	if [ ! -n "${__read_no_proxy}" ]; then
+	if [ -z "${__read_no_proxy}" ]; then
 		__read_no_proxy="localhost,127.0.0.1,localaddress,.localdomain.com"
 	fi
-	if [ ! -n "${__read_git_proxy_type}" ]; then
+	if [ -z "${__read_git_proxy_type}" ]; then
 		__read_git_proxy_type="socks5"
 	fi
 
-	echo "http://${__read_http}" >${HOME}/.zsh-proxy/http
-	echo "socks5://${__read_socks5}" >${HOME}/.zsh-proxy/socks5
-	echo "${__read_no_proxy}" >${HOME}/.zsh-proxy/no_proxy
-	echo "${__read_git_proxy_type}" >${HOME}/.zsh-proxy/git_proxy_type
+	echo "http://${__read_http}" >"${HOME}/.zsh-proxy/http"
+	echo "socks5://${__read_socks5}" >"${HOME}/.zsh-proxy/socks5"
+	echo "${__read_no_proxy}" >"${HOME}/.zsh-proxy/no_proxy"
+	echo "${__read_git_proxy_type}" >"${HOME}/.zsh-proxy/git_proxy_type"
 
 	__read_proxy_config
 }
@@ -112,7 +113,7 @@ __disable_proxy_apt() {
 }
 
 # Proxy for pip
-# pip can read http_proxy & https_proxy
+# pip can read -r http_proxy & https_proxy
 
 # Proxy for terminal
 
@@ -171,24 +172,24 @@ __disable_proxy_git() {
 # NPM
 
 __enable_proxy_npm() {
-	if which npm >/dev/null; then
-		npm config set proxy ${__ZSHPROXY_HTTP}
-		npm config set https-proxy ${__ZSHPROXY_HTTP}
+	if command -v npm >/dev/null; then
+		npm config set proxy "${__ZSHPROXY_HTTP}"
+		npm config set https-proxy "${__ZSHPROXY_HTTP}"
 		echo "- npm"
 	fi
-	if which yarn >/dev/null; then
-		yarn config set proxy ${__ZSHPROXY_HTTP} >/dev/null 2>&1
-		yarn config set https-proxy ${__ZSHPROXY_HTTP} >/dev/null 2>&1
+	if command -v yarn >/dev/null; then
+		yarn config set proxy "${__ZSHPROXY_HTTP}" >/dev/null 2>&1
+		yarn config set https-proxy "${__ZSHPROXY_HTTP}" >/dev/null 2>&1
 		echo "- yarn"
 	fi
 }
 
 __disable_proxy_npm() {
-	if which npm >/dev/null; then
+	if command -v npm >/dev/null; then
 		npm config delete proxy
 		npm config delete https-proxy
 	fi
-	if which yarn >/dev/null; then
+	if command -v yarn >/dev/null; then
 		yarn config delete proxy >/dev/null 2>&1
 		yarn config delete https-proxy >/dev/null 2>&1
 	fi
@@ -197,9 +198,9 @@ __disable_proxy_npm() {
 # ==================================================
 
 __enable_proxy() {
-	if [ ! -n "${__ZSHPROXY_STATUS}" ] || [ ! -n "${__ZSHPROXY_SOCKS5}" ] || [ ! -n "${__ZSHPROXY_HTTP}" ]; then
+	if [ -z "${__ZSHPROXY_STATUS}" ] || [ -z "${__ZSHPROXY_SOCKS5}" ] || [ -z "${__ZSHPROXY_HTTP}" ]; then
 		echo "========================================"
-		echo "zsh-proxy can not read configuration."
+		echo "zsh-proxy can not read -r configuration."
 		echo "You may have to reinitialize and reconfigure the plugin."
 		echo "Use following commands would help:"
 		echo "$ init_proxy"
@@ -239,20 +240,18 @@ __auto_proxy() {
 	if [ "${__ZSHPROXY_STATUS}" = "1" ]; then
 		__enable_proxy_all
 	fi
-	if [ "${__ZSHPROXY_STATUS}" = "0" ]; then
-	fi
 }
 
 # ==================================================
 
 init_proxy() {
-	mkdir -p $HOME/.zsh-proxy
-	touch $HOME/.zsh-proxy/status
-	echo "0" >${HOME}/.zsh-proxy/status
-	touch $HOME/.zsh-proxy/http
-	touch $HOME/.zsh-proxy/socks5
-	touch $HOME/.zsh-proxy/no_proxy
-	touch ${HOME}/.zsh-proxy/git_proxy_type
+	mkdir -p "$HOME/.zsh-proxy"
+	touch "$HOME/.zsh-proxy/status"
+	echo "0" >"${HOME}/.zsh-proxy/status"
+	touch "$HOME/.zsh-proxy/http"
+	touch "$HOME/.zsh-proxy/socks5"
+	touch "$HOME/.zsh-proxy/no_proxy"
+	touch "${HOME}/.zsh-proxy/git_proxy_type"
 	echo "----------------------------------------"
 	echo "Great! The zsh-proxy is initialized"
 	echo ""
@@ -275,13 +274,13 @@ config_proxy() {
 }
 
 proxy() {
-	echo "1" >${HOME}/.zsh-proxy/status
+	echo "1" >"${HOME}/.zsh-proxy/status"
 	__enable_proxy
 	__check_ip
 }
 
 noproxy() {
-	echo "0" >${HOME}/.zsh-proxy/status
+	echo "0" >"${HOME}/.zsh-proxy/status"
 	__disable_proxy
 	__check_ip
 }
