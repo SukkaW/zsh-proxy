@@ -187,6 +187,8 @@ __disable_proxy_npm() {
     if which npm >/dev/null; then
       npm config delete proxy
       npm config delete https-proxy
+    fi
+    if which yarn >/dev/null; then
       yarn config delete proxy >/dev/null 2>&1
       yarn config delete https-proxy >/dev/null 2>&1
     fi
