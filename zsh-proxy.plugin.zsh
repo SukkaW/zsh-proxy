@@ -243,6 +243,15 @@ __auto_proxy() {
 	fi
 }
 
+__zsh_proxy_update() {
+	__NOW_PATH=$(cd `dirname $0`; pwd)
+	cd "$HOME/.oh-my-zsh/custom/plugins/zsh-proxy"
+	git fetch --all
+	git reset --hard origin/master
+	source ~/.zshrc
+	cd ${__NOW_PATH}
+}
+
 # ==================================================
 
 init_proxy() {
@@ -288,6 +297,10 @@ noproxy() {
 
 myip() {
 	__check_ip
+}
+
+zsh_proxy_update() {
+	__zsh_proxy_update
 }
 
 __check_whether_init
