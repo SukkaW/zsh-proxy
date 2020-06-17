@@ -36,12 +36,13 @@ __check_ip() {
 	echo "----------------------------------------"
 	echo -n "IPv4: "
 	curl -s -k https://api-ipv4.ip.sb/ip
+	echo ""
 	echo "----------------------------------------"
 	echo -n "IPv6: "
 	curl -s -k https://api-ipv6.ip.sb/ip
-
+	echo ""
+	
 	if command -v python >/dev/null; then
-		echo ""
 		echo "----------------------------------------"
 		echo "Info: "
 		curl -s -k https://api.ip.sb/geoip | python -m json.tool
