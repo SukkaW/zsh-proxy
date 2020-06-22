@@ -41,7 +41,7 @@ __check_ip() {
 	echo -n "IPv6: "
 	curl -s -k https://api-ipv6.ip.sb/ip
 	echo ""
-	
+
 	if command -v python >/dev/null; then
 		echo "----------------------------------------"
 		echo "Info: "
