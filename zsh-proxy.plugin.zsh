@@ -94,6 +94,62 @@ __config_proxy() {
 	__read_proxy_config
 }
 
+__getLANip() {
+	echo "========================================"
+	echo "Check what your current host IP is"
+	echo -n "host_IP: "
+	__hostip=$(cat /etc/resolv.conf | grep nameserver | awk '{ print $2 }')
+	echo "${__hostip}"
+	echo "========================================"
+	echo "Check what your current wsl2 IP is"
+	echo -n "wsl_IP: "
+	__wslip=$(hostname -I | awk '{print $1}')
+	echo "${__wslip}"
+}
+
+__config_proxy2() {
+	echo "========================================"
+	echo "ZSH Proxy Plugin Config for WSL2"
+	echo "----------------------------------------"
+
+	echo -n "[socks5 port] {Default as 1080}
+(address:port): "
+	read -r __read_socks5_port
+
+	echo -n "[http port]   {Default as 8080}
+(address:port): "
+	read -r __read_http_port
+
+	echo -n "[no proxy domain] {Default as 'localhost,${__hostip},localaddress,.localdomain.com'}
+(comma separate domains): "
+	read -r __read_no_proxy
+
+	echo -n "[git proxy type] {Default as socks5}
+(socks5 or http): "
+	read -r __read_git_proxy_type
+	echo "========================================"
+
+	if [ -z "${__read_socks5_port}" ]; then
+		__read_socks5="1080"
+	fi
+	if [ -z "${__read_http_port}" ]; then
+		__read_http="8080"
+	fi
+	if [ -z "${__read_no_proxy}" ]; then
+		__read_no_proxy="localhost,${__hostip},localaddress,.localdomain.com"
+	fi
+	if [ -z "${__read_git_proxy_type}" ]; then
+		__read_git_proxy_type="socks5"
+	fi
+
+	echo "http://${__hostip}:${__read_http_port}" >"${HOME}/.zsh-proxy/http"
+	echo "socks5://${__hostip}:${__read_socks5_port}" >"${HOME}/.zsh-proxy/socks5"
+	echo "${__read_no_proxy}" >"${HOME}/.zsh-proxy/no_proxy"
+	echo "${__read_git_proxy_type}" >"${HOME}/.zsh-proxy/git_proxy_type"
+
+	__read_proxy_config
+}
+
 # ==================================================
 
 # Proxy for APT
@@ -276,11 +332,18 @@ init_proxy() {
 	echo "----------------------------------------"
 	echo "Now you might want to run following command:"
 	echo "$ config_proxy"
+	echo "Or in WSL2 (Windows Subsystem for Linux 2)"
+	echo "$ config_proxy2"
 	echo "----------------------------------------"
 }
 
 config_proxy() {
 	__config_proxy
+}
+
+config_proxy2() {
+	__getLANip
+	__config_proxy2
 }
 
 proxy() {
