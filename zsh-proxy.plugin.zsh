@@ -126,10 +126,10 @@ __check_whether_wsl2() {
         if echo "$answer" | grep -iq "^y" ;then
 			__getLANip
 	        __config_proxy2
-			__showLANip
-        else
-            __config_proxy
+			__showLANip   
         fi
+    else
+        __config_proxy
 	fi
 }
 
@@ -379,6 +379,7 @@ init_proxy() {
 
 config_proxy() {
 	__check_whether_wsl2
+
 }
 
 showLANip() {
