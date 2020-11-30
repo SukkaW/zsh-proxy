@@ -34,21 +34,29 @@ __check_ip() {
 	echo "========================================"
 	echo "Check what your IP is"
 	echo "----------------------------------------"
-	echo -n "IPv4: "
-	curl -s -k https://api-ipv4.ip.sb/ip
-	echo ""
+	ipv4=$(curl -s -k https://api-ipv4.ip.sb/ip)
+	if [ "$ipv4" = "" ]
+	then
+		echo "IPv4: -"
+	else  
+		echo "IPv4: "$ipv4
+	fi
 	echo "----------------------------------------"
-	echo -n "IPv6: "
-	curl -s -k https://api-ipv6.ip.sb/ip
-	echo ""
-
+	ipv6=$(curl -s -k https://api-ipv6.ip.sb/ip)
+	if [ "$ipv6" = "" ]
+		then
+	echo "IPv6: -"
+		else  
+	echo "IPv6: "$ipv6
+	fi
 	if command -v python >/dev/null; then
 		echo "----------------------------------------"
-		echo "Info: "
-		curl -s -k https://api.ip.sb/geoip | python -m json.tool
-		echo ""
+		geoip=$(curl -s -k https://api.ip.sb/geoip)
+		if [ "$geoip" != "" ]
+		then
+			echo $geoip | python -m json.tool
+		fi
 	fi
-
 	echo "========================================"
 }
 
