@@ -35,27 +35,24 @@ __check_ip() {
 	echo "Check what your IP is"
 	echo "----------------------------------------"
 	ipv4=$(curl -s -k https://api-ipv4.ip.sb/ip)
-	if [ "$ipv4" = "" ]
-	then
+	if [[ "$ipv4" != "" ]]; then
+		echo "IPv4: $ipv4"
+	else
 		echo "IPv4: -"
-	else  
-		echo "IPv4: "$ipv4
 	fi
 	echo "----------------------------------------"
 	ipv6=$(curl -s -k https://api-ipv6.ip.sb/ip)
-	if [ "$ipv6" = "" ]
-		then
-	echo "IPv6: -"
-		else  
-	echo "IPv6: "$ipv6
+	if [[ "$ipv6" != "" ]]; then
+		echo "IPv6: $ipv6"
+	else
+		echo "IPv6: -"
 	fi
 	if command -v python >/dev/null; then
 		geoip=$(curl -s -k https://api.ip.sb/geoip)
-		if [ "$geoip" != "" ]
-		then
+		if [[ "$geoip" != "" ]]; then
 			echo "----------------------------------------"
 			echo "Info: "
-			echo $geoip | python -m json.tool
+			echo "$geoip" | python -m json.tool
 		fi
 	fi
 	echo "========================================"
@@ -254,12 +251,15 @@ __auto_proxy() {
 }
 
 __zsh_proxy_update() {
-	__NOW_PATH=$(cd `dirname $0`; pwd)
-	cd "$HOME/.oh-my-zsh/custom/plugins/zsh-proxy"
+	__NOW_PATH=$(
+		cd "$(dirname "$0")" || exit
+		pwd
+	)
+	cd "$HOME/.oh-my-zsh/custom/plugins/zsh-proxy" || exit
 	git fetch --all
 	git reset --hard origin/master
-	source ~/.zshrc
-	cd ${__NOW_PATH}
+	source "$HOME/.zshrc"
+	cd "${__NOW_PATH}" || exit
 }
 
 # ==================================================
