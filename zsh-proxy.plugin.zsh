@@ -50,10 +50,11 @@ __check_ip() {
 	echo "IPv6: "$ipv6
 	fi
 	if command -v python >/dev/null; then
-		echo "----------------------------------------"
 		geoip=$(curl -s -k https://api.ip.sb/geoip)
 		if [ "$geoip" != "" ]
 		then
+			echo "----------------------------------------"
+			echo "Info: "
 			echo $geoip | python -m json.tool
 		fi
 	fi
