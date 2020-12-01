@@ -131,7 +131,7 @@ __enable_proxy_all() {
 	export HTTP_PROXY="${__ZSHPROXY_HTTP}"
 	# https_proxy
 	export https_proxy="${__ZSHPROXY_HTTP}"
-	export HTTPS_proxy="${__ZSHPROXY_HTTP}"
+	export HTTPS_PROXY="${__ZSHPROXY_HTTP}"
 	# ftp_proxy
 	export ftp_proxy="${__ZSHPROXY_HTTP}"
 	export FTP_PROXY="${__ZSHPROXY_HTTP}"
@@ -156,6 +156,7 @@ __disable_proxy_all() {
 	unset RSYNC_PROXY
 	unset ALL_PROXY
 	unset all_proxy
+	unset no_proxy
 }
 
 # Proxy for Git
