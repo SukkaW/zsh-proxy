@@ -41,7 +41,7 @@ __check_ip() {
 		echo "IPv4: -"
 	fi
 	echo "----------------------------------------"
-	ipv6=$(curl -s -k https://api-ipv6.ip.sb/ip)
+	ipv6=$(curl -s -k -m10 https://api-ipv6.ip.sb/ip)
 	if [[ "$ipv6" != "" ]]; then
 		echo "IPv6: $ipv6"
 	else
