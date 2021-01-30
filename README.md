@@ -11,8 +11,8 @@
 
 Firstly, clone this repository in `oh-my-zsh`'s plugins directory.
 
-```bash
-git clone https://github.com/sukkaw/zsh-proxy.git ~/.oh-my-zsh/custom/plugins/zsh-proxy
+```console
+$ git clone https://github.com/sukkaw/zsh-proxy.git ~/.oh-my-zsh/custom/plugins/zsh-proxy
 ```
 
 Secondly, activate the plugin in `~/.zshrc`. Enable it by adding `zsh-proxy` to the [plugins array](https://github.com/robbyrussell/oh-my-zsh/blob/master/templates/zshrc.zsh-template#L66).
@@ -60,7 +60,7 @@ Currently `zsh-proxy` doesn't support proxy with authentication, but I am workin
 
 After you configure the `zsh-proxy`, you are good to go. Try following command will enable proxy for supported package manager & software:
 
-```bash
+```console
 $ proxy
 ```
 
@@ -70,7 +70,7 @@ And next time you open a new terminal, zsh-proxy will automatically enable proxy
 
 If you want to disable proxy, you can run following command:
 
-```bash
+```console
 $ noproxy
 ```
 
@@ -78,11 +78,21 @@ $ noproxy
 
 If you forget whether you have enabled proxy or not, it is fine to run `proxy` command directly, as `proxy` will reset all the proxy before enable them. But the smarter way is to use following command to check which IP you are using now:
 
-```bash
+```console
 $ myip
 ```
 
 Check procedure will use `curl` and the IP data come from `ipip.net`, `ip.cn` & `ip.gs`.
+
+### `with_proxy`
+
+An one-liner version that only take effect in one command. It is similar to `proxychains -q`, but it can handle some cases that proxychains can not (e.g. [yay](https://github.com/Jguer/yay/issues/429)). Add it in front of your command:
+
+```console
+$ with_proxy <your-command>
+```
+
+Note that this is just an environment variable trick, it can not proxy your git and npm.
 
 ## Uninstallation
 
@@ -91,7 +101,7 @@ Check procedure will use `curl` and the IP data come from `ipip.net`, `ip.cn` & 
 
 And you can clean up files & folders created by `zsh-proxy` using following command:
 
-```bash
+```console
 $ rm -rf ~/.zsh-proxy
 ```
 
