@@ -92,7 +92,7 @@ An one-liner version that only take effect in one command. It is similar to `pro
 $ with_proxy <your-command>
 ```
 
-Note that this is just an environment variable trick, it can not proxy your git and npm.
+Note that this is just an environment variable trick, it can not proxy commands that do not respect those variables.
 
 ## Uninstallation
 
