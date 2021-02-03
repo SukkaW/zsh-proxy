@@ -316,3 +316,16 @@ zsh_proxy_update() {
 
 __check_whether_init
 __auto_proxy
+
+alias with_proxy=' \
+	http_proxy="${__ZSHPROXY_HTTP}" \
+	HTTP_PROXY="${__ZSHPROXY_HTTP}" \
+	https_proxy="${__ZSHPROXY_HTTP}" \
+	HTTPS_PROXY="${__ZSHPROXY_HTTP}" \
+	ftp_proxy="${__ZSHPROXY_HTTP}" \
+	FTP_PROXY="${__ZSHPROXY_HTTP}" \
+	rsync_proxy="${__ZSHPROXY_HTTP}" \
+	RSYNC_PROXY="${__ZSHPROXY_HTTP}" \
+	ALL_PROXY="${__ZSHPROXY_SOCKS5}" \
+	all_proxy="${__ZSHPROXY_SOCKS5}" \
+	no_proxy="${__ZSHPROXY_NO_PROXY}" '
