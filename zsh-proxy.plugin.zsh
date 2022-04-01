@@ -34,21 +34,21 @@ __check_ip() {
 	echo "========================================"
 	echo "Check what your IP is"
 	echo "----------------------------------------"
-	ipv4=$(curl -s -k https://api-ipv4.ip.sb/ip)
+	ipv4=$(curl -s -k https://api-ipv4.ip.sb/ip -H 'user-agent: zsh-proxy')
 	if [[ "$ipv4" != "" ]]; then
 		echo "IPv4: $ipv4"
 	else
 		echo "IPv4: -"
 	fi
 	echo "----------------------------------------"
-	ipv6=$(curl -s -k -m10 https://api-ipv6.ip.sb/ip)
+	ipv6=$(curl -s -k -m10 https://api-ipv6.ip.sb/ip -H 'user-agent: zsh-proxy')
 	if [[ "$ipv6" != "" ]]; then
 		echo "IPv6: $ipv6"
 	else
 		echo "IPv6: -"
 	fi
 	if command -v python >/dev/null; then
-		geoip=$(curl -s -k https://api.ip.sb/geoip)
+		geoip=$(curl -s -k https://api.ip.sb/geoip -H 'user-agent: zsh-proxy')
 		if [[ "$geoip" != "" ]]; then
 			echo "----------------------------------------"
 			echo "Info: "
