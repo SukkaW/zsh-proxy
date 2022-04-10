@@ -12,15 +12,15 @@
 # Sukka (https://skk.moe)
 
 __read_proxy_config() {
-	__ZSHPROXY_STATUS=$(cat "${HOME}/.zsh-proxy/status")
-	__ZSHPROXY_SOCKS5=$(cat "${HOME}/.zsh-proxy/socks5")
-	__ZSHPROXY_HTTP=$(cat "${HOME}/.zsh-proxy/http")
-	__ZSHPROXY_NO_PROXY=$(cat "${HOME}/.zsh-proxy/no_proxy")
-	__ZSHPROXY_GIT_PROXY_TYPE=$(cat "${HOME}/.zsh-proxy/git_proxy_type")
+	__ZSHPROXY_STATUS=$(cat "${ZDOTDIR:-${HOME}}/.zsh-proxy/status")
+	__ZSHPROXY_SOCKS5=$(cat "${ZDOTDIR:-${HOME}}/.zsh-proxy/socks5")
+	__ZSHPROXY_HTTP=$(cat "${ZDOTDIR:-${HOME}}/.zsh-proxy/http")
+	__ZSHPROXY_NO_PROXY=$(cat "${ZDOTDIR:-${HOME}}/.zsh-proxy/no_proxy")
+	__ZSHPROXY_GIT_PROXY_TYPE=$(cat "${ZDOTDIR:-${HOME}}/.zsh-proxy/git_proxy_type")
 }
 
 __check_whether_init() {
-	if [ ! -f "${HOME}/.zsh-proxy/status" ] || [ ! -f "${HOME}/.zsh-proxy/http" ] || [ ! -f "${HOME}/.zsh-proxy/socks5" ] || [ ! -f "${HOME}/.zsh-proxy/no_proxy" ]; then
+	if [ ! -f "${ZDOTDIR:-${HOME}}/.zsh-proxy/status" ] || [ ! -f "${ZDOTDIR:-${HOME}}/.zsh-proxy/http" ] || [ ! -f "${ZDOTDIR:-${HOME}}/.zsh-proxy/socks5" ] || [ ! -f "${ZDOTDIR:-${HOME}}/.zsh-proxy/no_proxy" ]; then
 		echo "----------------------------------------"
 		echo "You should run following command first:"
 		echo "$ init_proxy"
@@ -93,10 +93,10 @@ __config_proxy() {
 		__read_git_proxy_type="socks5"
 	fi
 
-	echo "http://${__read_http}" >"${HOME}/.zsh-proxy/http"
-	echo "socks5://${__read_socks5}" >"${HOME}/.zsh-proxy/socks5"
-	echo "${__read_no_proxy}" >"${HOME}/.zsh-proxy/no_proxy"
-	echo "${__read_git_proxy_type}" >"${HOME}/.zsh-proxy/git_proxy_type"
+	echo "http://${__read_http}" >"${ZDOTDIR:-${HOME}}/.zsh-proxy/http"
+	echo "socks5://${__read_socks5}" >"${ZDOTDIR:-${HOME}}/.zsh-proxy/socks5"
+	echo "${__read_no_proxy}" >"${ZDOTDIR:-${HOME}}/.zsh-proxy/no_proxy"
+	echo "${__read_git_proxy_type}" >"${ZDOTDIR:-${HOME}}/.zsh-proxy/git_proxy_type"
 
 	__read_proxy_config
 }
@@ -259,20 +259,20 @@ __zsh_proxy_update() {
 	cd "$HOME/.oh-my-zsh/custom/plugins/zsh-proxy" || exit
 	git fetch --all
 	git reset --hard origin/master
-	source "$HOME/.zshrc"
+	source "${ZDOTDIR:-${HOME}}/.zshrc"
 	cd "${__NOW_PATH}" || exit
 }
 
 # ==================================================
 
 init_proxy() {
-	mkdir -p "$HOME/.zsh-proxy"
-	touch "$HOME/.zsh-proxy/status"
-	echo "0" >"${HOME}/.zsh-proxy/status"
-	touch "$HOME/.zsh-proxy/http"
-	touch "$HOME/.zsh-proxy/socks5"
-	touch "$HOME/.zsh-proxy/no_proxy"
-	touch "${HOME}/.zsh-proxy/git_proxy_type"
+	mkdir -p "${ZDOTDIR:-${HOME}}/.zsh-proxy"
+	touch "${ZDOTDIR:-${HOME}}/.zsh-proxy/status"
+	echo "0" >"${ZDOTDIR:-${HOME}}/.zsh-proxy/status"
+	touch "${ZDOTDIR:-${HOME}}/.zsh-proxy/http"
+	touch "${ZDOTDIR:-${HOME}}/.zsh-proxy/socks5"
+	touch "${ZDOTDIR:-${HOME}}/.zsh-proxy/no_proxy"
+	touch "${ZDOTDIR:-${HOME}}/.zsh-proxy/git_proxy_type"
 	echo "----------------------------------------"
 	echo "Great! The zsh-proxy is initialized"
 	echo ""
@@ -295,13 +295,13 @@ config_proxy() {
 }
 
 proxy() {
-	echo "1" >"${HOME}/.zsh-proxy/status"
+	echo "1" >"${ZDOTDIR:-${HOME}}/.zsh-proxy/status"
 	__enable_proxy
 	__check_ip
 }
 
 noproxy() {
-	echo "0" >"${HOME}/.zsh-proxy/status"
+	echo "0" >"${ZDOTDIR:-${HOME}}/.zsh-proxy/status"
 	__disable_proxy
 	__check_ip
 }
