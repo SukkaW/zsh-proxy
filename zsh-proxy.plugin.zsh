@@ -67,6 +67,12 @@ __config_proxy() {
 (address:port): "
 	read -r __read_socks5
 
+	echo -n "[socks5 type] Select the proxy type you want to use {Default as socks5}:
+1. socks5
+2. socks5h (resolve DNS through the proxy server)
+(1 or 2): " 
+	read -r __read_socks5_type
+
 	echo -n "[http proxy]   {Default as 127.0.0.1:8080}
 (address:port): "
 	read -r __read_http
@@ -83,6 +89,9 @@ __config_proxy() {
 	if [ -z "${__read_socks5}" ]; then
 		__read_socks5="127.0.0.1:1080"
 	fi
+	if [ -z "${__read_socks5_type}" ]; then
+		__read_socks5_type="1"
+	fi
 	if [ -z "${__read_http}" ]; then
 		__read_http="127.0.0.1:8080"
 	fi
@@ -94,7 +103,11 @@ __config_proxy() {
 	fi
 
 	echo "http://${__read_http}" >"${ZDOTDIR:-${HOME}}/.zsh-proxy/http"
-	echo "socks5://${__read_socks5}" >"${ZDOTDIR:-${HOME}}/.zsh-proxy/socks5"
+	if [ "${__read_socks5_type}" = "2" ]; then
+		echo "socks5h://${__read_socks5}" >"${ZDOTDIR:-${HOME}}/.zsh-proxy/socks5"
+	else
+		echo "socks5://${__read_socks5}" >"${ZDOTDIR:-${HOME}}/.zsh-proxy/socks5"
+	fi
 	echo "${__read_no_proxy}" >"${ZDOTDIR:-${HOME}}/.zsh-proxy/no_proxy"
 	echo "${__read_git_proxy_type}" >"${ZDOTDIR:-${HOME}}/.zsh-proxy/git_proxy_type"
 
