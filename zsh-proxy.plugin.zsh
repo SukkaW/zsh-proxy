@@ -70,7 +70,7 @@ __config_proxy() {
 	echo -n "[socks5 type] Select the proxy type you want to use {Default as socks5}:
 1. socks5
 2. socks5h (resolve DNS through the proxy server)
-(1 or 2): " 
+(1 or 2): "
 	read -r __read_socks5_type
 
 	echo -n "[http proxy]   {Default as 127.0.0.1:8080}
@@ -204,6 +204,11 @@ __enable_proxy_npm() {
 		yarn config set https-proxy "${__ZSHPROXY_HTTP}" >/dev/null 2>&1
 		echo "- yarn"
 	fi
+	if command -v pnpm >/dev/null; then
+		pnpm config set proxy "${__ZSHPROXY_HTTP}" >/dev/null 2>&1
+		pnpm config set https-proxy "${__ZSHPROXY_HTTP}" >/dev/null 2>&1
+		echo "- pnpm"
+	fi
 }
 
 __disable_proxy_npm() {
@@ -214,6 +219,10 @@ __disable_proxy_npm() {
 	if command -v yarn >/dev/null; then
 		yarn config delete proxy >/dev/null 2>&1
 		yarn config delete https-proxy >/dev/null 2>&1
+	fi
+	if command -v pnpm >/dev/null; then
+		pnpm config delete proxy >/dev/null 2>&1
+		pnpm config delete https-proxy >/dev/null 2>&1
 	fi
 }
 
@@ -243,7 +252,7 @@ __enable_proxy() {
 		__enable_proxy_all
 		echo "- git"
 		__enable_proxy_git
-		# npm & yarn"
+		# npm & yarn & pnpm"
 		__enable_proxy_npm
 		# apt"
 		__enable_proxy_apt
