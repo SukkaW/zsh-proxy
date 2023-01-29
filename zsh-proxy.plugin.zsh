@@ -114,6 +114,104 @@ __config_proxy() {
 	__read_proxy_config
 }
 
+
+# ==================================================
+
+# Proxy for WSL
+
+__getLANip() {
+	__hostip=$(cat /etc/resolv.conf | grep nameserver | awk '{ print $2 }')
+	__wslip=$(hostname -I | awk '{print $1}')
+}
+
+__showLANip() {
+	echo "========================================"
+	echo "Check what your current host IP is"
+	echo -n "host_IP: "
+	echo "${__hostip}"
+	echo "========================================"
+	echo "Check what your current wsl2 IP is"
+	echo -n "wsl_IP: "
+	echo "${__wslip}"
+}
+
+__check_whether_wsl2() {
+    if command -v wsl.exe >/dev/null; then
+	    echo "----------------------------------------"
+        echo -n "Is this in WSL2 (y/n)? "
+        old_stty_cfg=$(stty -g)
+        stty raw -echo
+        answer=$( while ! head -c 1 | grep -i '[ny]' ;do true ;done )
+        stty $old_stty_cfg
+        if echo "$answer" | grep -iq "^y" ;then
+			__getLANip
+	        __config_proxy2
+			__showLANip   
+        fi
+    else
+        __config_proxy
+	fi
+}
+
+__change_ip_wsl2() {
+	if [ -f "${HOME}/.zsh-proxy/wsl2" ] && [ -f "${HOME}/.zsh-proxy/http_port" ] && [ -f "${HOME}/.zsh-proxy/socks5_port" ] &&  [ -f "${HOME}/.zsh-proxy/hostip" ];then
+		__getLANip
+		sed -i "s/"$(cat "${HOME}/.zsh-proxy/hostip")"/"${__hostip}"/" "${HOME}/.zsh-proxy/no_proxy"
+		echo "http://${__hostip}:$(cat "${HOME}/.zsh-proxy/http_port")" >"${HOME}/.zsh-proxy/http"
+		echo "socks5://${__hostip}:$(cat "${HOME}/.zsh-proxy/socks5_port")" >"${HOME}/.zsh-proxy/socks5"
+	fi
+}
+
+__config_proxy2() {
+	echo "========================================"
+	echo "ZSH Proxy Plugin Config for WSL2"
+	echo "----------------------------------------"
+
+	echo -n "[socks5 port] {Default as 1080}
+(address:port): "
+	read -r __read_socks5_port
+
+	echo -n "[http port]   {Default as 8080}
+(address:port): "
+	read -r __read_http_port
+
+	echo -n "[no proxy domain] {Default as 'localhost,${__hostip},localaddress,.localdomain.com'}
+(comma separate domains): "
+	read -r __read_no_proxy
+
+	echo -n "[git proxy type] {Default as socks5}
+(socks5 or http): "
+	read -r __read_git_proxy_type
+	echo "========================================"
+
+	if [ -z "${__read_socks5_port}" ]; then
+		__read_socks5="1080"
+	fi
+	if [ -z "${__read_http_port}" ]; then
+		__read_http="8080"
+	fi
+	if [ -z "${__read_no_proxy}" ]; then
+		__read_no_proxy="localhost,${__gethostip},localaddress,.localdomain.com"
+	fi
+	if [ -z "${__read_git_proxy_type}" ]; then
+		__read_git_proxy_type="socks5"
+	fi
+
+	echo "http://${__hostip}:${__read_http_port}" >"${HOME}/.zsh-proxy/http"
+	echo "${__read_http_port}" >"${HOME}/.zsh-proxy/http_port"
+	echo "socks5://${__hostip}:${__read_socks5_port}" >"${HOME}/.zsh-proxy/socks5"
+	echo "${__read_socks5_port}" >"${HOME}/.zsh-proxy/socks5_port"
+	echo "${__read_no_proxy}" >"${HOME}/.zsh-proxy/no_proxy"
+	echo "${__read_git_proxy_type}" >"${HOME}/.zsh-proxy/git_proxy_type"
+	echo "${__hostip}" > "${HOME}/.zsh-proxy/hostip"
+	echo "wsl2" > "${HOME}/.zsh-proxy/wsl2"
+	echo "----------------------------------------"
+	echo "You can check WSL2 ip by following command anytime:"
+	echo "$ showLANip"
+	echo "----------------------------------------"
+	__read_proxy_config
+}
+
 # ==================================================
 
 # Proxy for APT
@@ -313,7 +411,12 @@ init_proxy() {
 }
 
 config_proxy() {
-	__config_proxy
+	__check_whether_wsl2
+
+}
+
+showLANip() {
+	__showLANip
 }
 
 proxy() {
@@ -337,4 +440,5 @@ zsh_proxy_update() {
 }
 
 __check_whether_init
+__change_ip_wsl2
 __auto_proxy
