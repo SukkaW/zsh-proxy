@@ -61,7 +61,7 @@ Currently `zsh-proxy` doesn't support proxy with authentication, but I am workin
 After you configure the `zsh-proxy`, you are good to go. Try following command will enable proxy for supported package manager & software:
 
 ```bash
-$ proxy
+proxy
 ```
 
 And next time you open a new terminal, zsh-proxy will automatically enable proxy for you.
@@ -71,7 +71,7 @@ And next time you open a new terminal, zsh-proxy will automatically enable proxy
 If you want to disable proxy, you can run following command:
 
 ```bash
-$ noproxy
+noproxy
 ```
 
 ### `myip`
@@ -79,7 +79,7 @@ $ noproxy
 If you forget whether you have enabled proxy or not, it is fine to run `proxy` command directly, as `proxy` will reset all the proxy before enable them. But the smarter way is to use following command to check which IP you are using now:
 
 ```bash
-$ myip
+myip
 ```
 
 Check procedure will use `curl` and the IP data come from `ipip.net`, `ip.cn` & `ip.gs`.
@@ -92,7 +92,7 @@ Check procedure will use `curl` and the IP data come from `ipip.net`, `ip.cn` & 
 And you can clean up files & folders created by `zsh-proxy` using following command:
 
 ```bash
-$ rm -rf ~/.zsh-proxy
+rm -rf ~/.zsh-proxy
 ```
 
 ## Supported
