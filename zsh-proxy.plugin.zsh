@@ -87,7 +87,7 @@ __config_proxy() {
   echo -n "[socks5 proxy] {Default as $__read_socks5_default}
 (address:port): "
   read -r __read_socks5
-  __read_socks5=${__read_socks5:-__read_socks5_default}
+  __read_socks5=${__read_socks5:-$__read_socks5_default}
 
   __read_socks5_type_default=1
   echo -n "[socks5 type] Select the proxy type you want to use {Default as socks5}:
@@ -95,19 +95,19 @@ __config_proxy() {
 2. socks5h (resolve DNS through the proxy server)
 (1 or 2): "
   read -r __read_socks5_type
-  __read_socks5_type=${__read_socks5_type:-__read_socks5_type_default}
+  __read_socks5_type=${__read_socks5_type:-$__read_socks5_type_default}
 
   __read_http_default="$wsl2_host_ip:8080"
   echo -n "[http proxy]   {Default as $__read_http_default}
 (address:port): "
   read -r __read_http
-  __read_http=${__read_http:-__read_http_default}
+  __read_http=${__read_http:-$__read_http_default}
 
   __read_no_proxy_default="localhost,127.0.0.1,$wsl2_host_ip,localaddress,.localdomain.com"
   echo -n "[no proxy domain] {Default as '$__read_no_proxy_default'}
 (comma separate domains): "
   read -r __read_no_proxy
-  __read_no_proxy=${__read_no_proxy:-__read_no_proxy_default}
+  __read_no_proxy=${__read_no_proxy:-$__read_no_proxy_default}
 
   echo -n "[no proxy app] Skip proxy config for those app, part of apt,rsync,ftp,git,npm
 (comma separate app): "
@@ -117,7 +117,7 @@ __config_proxy() {
   echo -n "[git proxy type] {Default as $__read_git_proxy_type_default}
 (socks5 or http): "
   read -r __read_git_proxy_type
-  __read_git_proxy_type=${__read_git_proxy_type:-__read_git_proxy_type_default}
+  __read_git_proxy_type=${__read_git_proxy_type:-$__read_git_proxy_type_default}
   echo "========================================"
 
   echo "http://${__read_http}" >"${ZDOTDIR:-${HOME}}/.zsh-proxy/http"
@@ -163,7 +163,7 @@ __enable_proxy_all() {
       continue
     fi
     pk="${key}_proxy"
-    echo "setup $pk"
+    #echo "setup $pk"
     export "$(echo "$pk" | lower)"="$__ZSHPROXY_HTTP"
     export "$(echo "$pk" | upper)"="$__ZSHPROXY_HTTP"
   done
@@ -256,7 +256,7 @@ __enable_proxy() {
     __disable_proxy
     echo "Done!"
     echo "----------------------------------------"
-    echo "Enable proxy for:"
+    echo "Enable proxy..."
     __enable_proxy_all
     for key in "${SPEC_ENV[@]}"; do
       if [[ ",$__ZSHPROXY_NO_PROXY_APP," =~ ",$key," ]]; then
@@ -307,6 +307,7 @@ init_proxy() {
   touch "${ZDOTDIR:-${HOME}}/.zsh-proxy/http"
   touch "${ZDOTDIR:-${HOME}}/.zsh-proxy/socks5"
   touch "${ZDOTDIR:-${HOME}}/.zsh-proxy/no_proxy"
+  touch "${ZDOTDIR:-${HOME}}/.zsh-proxy/no_proxy_app"
   touch "${ZDOTDIR:-${HOME}}/.zsh-proxy/git_proxy_type"
   echo "----------------------------------------"
   echo "Great! The zsh-proxy is initialized"
