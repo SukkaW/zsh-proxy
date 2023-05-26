@@ -52,22 +52,17 @@ __check_whether_init() {
 __check_ip() {
   echo "========================================"
   echo "Check what your IP is"
+
   echo "----------------------------------------"
-  ipv4=$(curl -s -k https://api-ipv4.ip.sb/ip -H 'user-agent: zsh-proxy')
-  if [[ "$ipv4" != "" ]]; then
-    echo "IPv4: $ipv4"
-  else
-    echo "IPv4: -"
-  fi
+  ipv4=$(curl -s -k -m3 https://api-ipv4.ip.sb/ip -H 'user-agent: zsh-proxy')
+  echo "IPv4: ${ipv4:--}"
+
   echo "----------------------------------------"
-  ipv6=$(curl -s -k -m10 https://api-ipv6.ip.sb/ip -H 'user-agent: zsh-proxy')
-  if [[ "$ipv6" != "" ]]; then
-    echo "IPv6: $ipv6"
-  else
-    echo "IPv6: -"
-  fi
+  ipv6=$(curl -s -k -m3 https://api-ipv6.ip.sb/ip -H 'user-agent: zsh-proxy')
+  echo "IPv6: ${ipv6:--}"
+
   if command -v python >/dev/null; then
-    geoip=$(curl -s -k https://api.ip.sb/geoip -H 'user-agent: zsh-proxy')
+    geoip=$(curl -s -k -m3 https://api.ip.sb/geoip -H 'user-agent: zsh-proxy')
     if [[ "$geoip" != "" ]]; then
       echo "----------------------------------------"
       echo "Info: "
