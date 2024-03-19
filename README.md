@@ -19,9 +19,7 @@ Secondly, activate the plugin in `~/.zshrc`. Enable it by adding `zsh-proxy` to 
 
 ```
 plugins=(
-    [plugins
-     ...]
-    zsh-proxy
+    plugins... zsh-proxy
 )
 ```
 
