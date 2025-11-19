@@ -47,12 +47,12 @@ __check_ip() {
 	else
 		echo "IPv6: -"
 	fi
-	if command -v python >/dev/null; then
+	if command -v jq >/dev/null; then
 		geoip=$(curl -s -k https://api.ip.sb/geoip -H 'user-agent: zsh-proxy')
 		if [[ "$geoip" != "" ]]; then
 			echo "----------------------------------------"
 			echo "Info: "
-			echo "$geoip" | python -m json.tool
+			echo "$geoip" | jq
 		fi
 	fi
 	echo "========================================"
